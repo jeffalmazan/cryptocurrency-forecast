@@ -26,7 +26,7 @@ def xgboost_model(df, target_column='Close', features=None, test_size=0.2, rando
     
         model = xgb.XGBRegressor(objective='reg:squarederror',
                                  colsample_bytree=0.3,
-                                 learning_rate=0.1,
+                                 learning_rate=0.2,
                                  max_depth=5,
                                  alpha=10,
                                  n_estimators=10)

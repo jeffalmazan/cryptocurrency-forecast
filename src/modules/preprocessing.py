@@ -9,6 +9,12 @@ import time
 def perform_cleanup(df):
     start_time = time.time()
 
+    info = df.info()
+    descr = df.describe()
+
+    print(info)
+    print(descr)
+
     print("\nChecking for Null Values")
     null_counts = df.isnull().sum()
 
@@ -18,6 +24,8 @@ def perform_cleanup(df):
         for column, count in null_counts.items():
             if count > 0:
                 print(f"{column}: {count} null values")
+    else:
+        print(null_counts,'\n There are no Null values with the dataset.')
     
     # Separate numerical and categorical data
     print("Separating Numerical and Categorical Data")

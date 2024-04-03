@@ -1,8 +1,9 @@
 import pandas as pd
-# from read_csv import read_data
+from read_csv import read_data
 import time
+import re
 
-# df = read_data()
+df = read_data()
 
 
 
@@ -68,11 +69,14 @@ def perform_cleanup(df):
     print(f"\nNumber of records before removing duplicates: {num_records_before}")
     print(f"Number of records after removing duplicates: {num_records_after}")
 
+      # Sort data by Date within each symbol group
+    df.sort_values(by=['Symbol', 'Date'], inplace=True)
+
     print(f"Cleanup completed in {time.time() - start_time} seconds")
 
     return df
 
-# perform_cleanup(df)
+perform_cleanup(df)
 
 def handle_outliers(df):
     

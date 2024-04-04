@@ -1,9 +1,9 @@
 import pandas as pd
-from read_csv import read_data
+#from read_csv import read_data
 import time
 import re
 
-df = read_data()
+#df = read_data()
 
 
 
@@ -76,7 +76,7 @@ def perform_cleanup(df):
 
     return df
 
-perform_cleanup(df)
+#perform_cleanup(df)
 
 def handle_outliers(df):
     

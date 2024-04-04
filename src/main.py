@@ -8,6 +8,7 @@ from modules.preprocessing import handle_outliers
 from modules.visualizations import crypto_visualization
 from modules.visualizations import plot_correlation_heatmap
 # from modules.xgboost_model import xgboost_model
+from modules.bitcoin_model import train_bitcoin
 
 
 
@@ -34,6 +35,10 @@ def main():
     # XGboost
     # print('#5 XGBoost Model')
     # xgboost_df = xgboost_model(cleaned_df)
+    
+    print('#6 Bitcoin')
+    train_bitcoin(heatmap_df)
+    
 
 if __name__ == "__main__":
     main()

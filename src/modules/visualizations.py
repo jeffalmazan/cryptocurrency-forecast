@@ -56,11 +56,12 @@ def plot_correlation_heatmap(df):
 
     # Generate a heatmap
     plt.figure(figsize=(10, 8))
-    sns.heatmap(corr, annot=True, fmt=".2f", cmap="coolwarm")
+    sns.heatmap(corr, annot=True, fmt=".6f", cmap="coolwarm")
     plt.title("Correlation Heatmap")
     plt.show()
 
 # plot_correlation_heatmap(df)
+
 
 
 

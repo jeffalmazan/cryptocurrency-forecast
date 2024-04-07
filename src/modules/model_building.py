@@ -1,3 +1,5 @@
+import os
+import pickle
 import numpy as np
 import time
 from sklearn.model_selection import train_test_split, GridSearchCV
@@ -30,6 +32,17 @@ def select_best_model(mae_xgb, mae_lr, mae_rf, xgb_model, lr_model, rf_model):
 # Main function to train and evaluate models for each cryptocurrency symbol
 def train_models(df, symbols=None, features=['Open', 'High', 'Low', 'Volume USDT'], target_column='Close', test_size=0.1, validation_size=0.1, random_state=42):
     # Model will train from the defined features above
+
+    # Get the directory of the current file (__file__ is the path to the current script)
+    current_directory = os.path.dirname(os.path.abspath(__file__))
+    # Go up two levels from the current directory to get to the project root
+    project_root = os.path.join(current_directory, '..', '..')
+    # Define the path to the models directory within the project root
+    models_directory = os.path.join(project_root, 'models')
+    # Create the models directory if it does not exist
+    os.makedirs(models_directory, exist_ok=True)
+
+
     if symbols is None:
         symbols = df['Symbol'].unique().tolist()
 
@@ -100,7 +113,11 @@ def train_models(df, symbols=None, features=['Open', 'High', 'Low', 'Volume USDT
         best_model_info = select_best_model(mae_xgb, mae_lr, mae_rf, xgb_grid_search.best_estimator_, lr_grid_search.best_estimator_, rf_grid_search.best_estimator_)
         best_models[symbol] = best_model_info  # Store the best model info
 
-        print(f"{symbol}: Best Model: {best_model_info['name']}, MAE: {best_model_info['mae']:.5f}")
+    # After all models have been trained, save the best models to a single .pkl file
+    all_models_filename = os.path.join(models_directory, 'all_best_models.pkl')
+    with open(all_models_filename, 'wb') as f:
+        pickle.dump(best_models, f)
+    print(f"Saved all models to {all_models_filename}")
 
     runtime = time.time() - start_time
     print("\nTraining complete.")

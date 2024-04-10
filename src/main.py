@@ -9,6 +9,7 @@ from modules.visualizations import crypto_visualization
 from modules.visualizations import plot_correlation_heatmap
 from modules.model_building import select_best_model
 from modules.model_building import train_models
+from modules.pca import apply_pca
 
 
 
@@ -23,6 +24,9 @@ def main():
     print("#2 Perform cleanup")
     cleaned_df = perform_cleanup(df)
 
+    # Perform PCA
+    perform_pca_df = apply_pca(cleaned_df)
+
     # Handle Outlier
     # print("#3 Handle Outlier")
     # df_no_outliers = handle_outliers(cleaned_df)
@@ -31,11 +35,11 @@ def main():
     print('#4 Visualizations for each Crypto')
     # visualizations_df = crypto_visualization(cleaned_df)
     print('Heatmap')
-    heatmap_df = plot_correlation_heatmap(cleaned_df)
+    heatmap_df = plot_correlation_heatmap(perform_pca_df)
 
     # Model Building
     print('#5 Model Building and training')
-    train_model = train_models(cleaned_df)
+    train_model = train_models(perform_pca_df)
     
     
     

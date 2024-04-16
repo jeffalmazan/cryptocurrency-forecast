@@ -47,8 +47,8 @@ def crypto_visualization(df):
 
 
 def plot_correlation_heatmap(df):
-    # excluded_columns = ['Unix', 'Open', 'High', 'Low']  # Excluded columns
-    excluded_columns = ['Unix']
+    excluded_columns = ['Unix', 'Open', 'High', 'Low']  # Excluded columns
+    # excluded_columns = ['Unix', 'PCA_1']
     numerical_columns = df.select_dtypes(include=['float64', 'int64']).drop(columns=excluded_columns, errors='ignore')
     
     # Calculate the correlation matrix

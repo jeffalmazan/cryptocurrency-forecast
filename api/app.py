@@ -8,7 +8,7 @@ import pickle
 
 app = Flask(__name__)
 
-models_directory = 'models/'
+models_directory = '../models/'
 
 def populate_data_for_prediction():
     columns = ['tradecount', 'PCA_1', 'Volume USDT', 'Crypto Volume']

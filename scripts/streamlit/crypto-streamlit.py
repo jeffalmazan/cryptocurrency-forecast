@@ -18,13 +18,13 @@ cryto_desc = ['Cardano', 'Avalanche', 'BNB','Bitcoin','Dogecoin','Ethereum','Cha
 crypto = st.selectbox("CrytoCurrency: ", cryto_desc , index=2 )
 
 # open = st.number_input("Enter Open Amount",step=1.,format="%.2f")
-open = st.number_input("Enter Open Amount USD",format="%.2f")
+open = st.number_input("Enter Open Amount USD",format="%.5f")
 
-high = st.number_input("Enter High Amount USD")
+high = st.number_input("Enter High Amount USD",format="%.5f")
 
-low = st.number_input("Enter Low Amount USD")
+low = st.number_input("Enter Low Amount USD",format="%.5f")
 
-volume = st.number_input("Enter Volume USDT")
+volume = st.number_input("Enter Volume USDT",format="%.5f")
 
 if(st.button('Predict Close Amount')):
 
@@ -37,32 +37,42 @@ if(st.button('Predict Close Amount')):
 	st.text("Volume USDT     : {}.".format(volume))
 
 
-	closeAmt = 51774.73
+	# closeAmt = 51774.73
 
-	# st.text("CrytoCurrency[ {0} - {1} ] Close Amount is {2}.".format(  crypto,  cryto_code[cryto_desc.index(crypto)],  closeAmt ))
+	# # st.text("CrytoCurrency[ {0} - {1} ] Close Amount is {2}.".format(  crypto,  cryto_code[cryto_desc.index(crypto)],  closeAmt ))
+ 	# st.subheader("CrytoCurrency [ {0} - {1} ]".format(  crypto,  cryto_code[cryto_desc.index(crypto)] ))
+	# st.subheader("Close Amount is {:,.2f} USD.".format( closeAmt ))
  
-	st.subheader("CrytoCurrency [ {0} - {1} ]".format(  crypto,  cryto_code[cryto_desc.index(crypto)] ))
-	st.subheader("Close Amount is {:,.2f} USD.".format( closeAmt ))
  
- 
-	# ###Sammple url calling
- 
-	# # URL of the Flask web service
-	# url = 'http://localhost:8000/getEarnings'
+	# Prepare data payload
+	payload = {
+	}
 
-	# # Query parameters
-	# params = {
-	# 	'locationId': 2,
-	# 	'day': "Monday",
-	# 	'time': "02"
-	# }
+	# Make API request
+	
+	api_url = 'http://localhost:8000/crypto/currency/{0}/open/{1}'.format( cryto_code[cryto_desc.index(crypto)], open )  # Update URL based on your Flask app's address
+ 
+	# st.write(api_url)
+ 
+	response = requests.get(api_url, json=payload)
 
-	# # Send GET request
-	# response = requests.get(url, params=params)
-
-	# # Print response
-	# print(response.json()) 	
+	if response.status_code == 200:
+		result = response.json()
   
-	# st.subheader("Prediction Close Amount is {:,.2f} USD.".format( response.json()[0]["earning"] ))
+		# st.write('API Response:')
+		# st.write(result)
+    
+		
+		closeAmt = float( response.json()["prediction"] [0])
+
+		# st.text("CrytoCurrency[ {0} - {1} ] Close Amount is {2}.".format(  crypto,  cryto_code[cryto_desc.index(crypto)],  closeAmt ))
+	
+		st.subheader("CrytoCurrency [ {0} - {1} ]".format(  crypto,  cryto_code[cryto_desc.index(crypto)] ))
+		st.subheader("Predicted Close Amount is {:,.2f} USD.".format( closeAmt ))
+
+  
+	else:
+		st.write('API request failed')
+ 
  
  

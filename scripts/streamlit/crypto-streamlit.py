@@ -68,7 +68,7 @@ if(st.button('Predict Close Amount')):
 		# st.text("CrytoCurrency[ {0} - {1} ] Close Amount is {2}.".format(  crypto,  cryto_code[cryto_desc.index(crypto)],  closeAmt ))
 	
 		st.subheader("CrytoCurrency [ {0} - {1} ]".format(  crypto,  cryto_code[cryto_desc.index(crypto)] ))
-		st.subheader("Predicted Close Amount is {:,.2f} USD.".format( closeAmt ))
+		st.subheader("Predicted Close Amount is {:,.5f} USD.".format( closeAmt ))
 
   
 	else:

@@ -72,7 +72,7 @@ def derive_latest_values_by_currency(currency):
     
     print('currency:', currency)
     
-    file_path = f'data/Datasets/Binance_{currency}_d.csv'
+    file_path = f'../data/Datasets/Binance_{currency}_d.csv'
     print(file_path)
     df = pd.DataFrame()
 
@@ -99,7 +99,6 @@ def derive_latest_values_by_currency(currency):
     result = subset_df.iloc[0].to_dict()#subset_df.to_dict(orient='records')
        
     return jsonify(result), 200
-
     
     
 url = (
@@ -111,7 +110,7 @@ url = (
 @app.route(url, methods=['GET'])
 def predict_crypto_value(currency, open_value, high_value, low_value, tradecount, crypto_volume, volume_usdt):
     
-    models_directory = 'models/'
+    models_directory = '../models/'
     
     # Construct the path to the model file based on user input
     model_path = os.path.join(models_directory, f'best_model_{currency}.pkl')

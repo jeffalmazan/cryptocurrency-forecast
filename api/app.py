@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request
-import pandas as pd
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
 
 import pandas as pd
 import numpy as np
@@ -8,49 +9,116 @@ import pickle
 
 app = Flask(__name__)
 
-models_directory = '../models/'
+def apply_pca(df, n_components=None):
+    
+    # Extracting the relevant features for PCA
+    features = ['Open', 'High', 'Low']
+    X = df[features]
+    
+    # Standardizing the features before applying PCA
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
+    
+    # Sets variance automatically to 95% if n_components is set to none
+    if n_components is None:
+        pca = PCA(n_components=0.95)
+    else:
+        pca = PCA(n_components=n_components)
+    X_pca = pca.fit_transform(X_scaled)
+    
+    # Printing the components
+    print("PCA components:\n", pca.components_)
+    
+    # Creating a DataFrame with the PCA features
+    pca_columns = [f'PCA_{i+1}' for i in range(pca.n_components_)]
+    df_pca = pd.DataFrame(X_pca, columns=pca_columns, index=df.index)
+    
+    # Combining the PCA features with the original DataFrame
+    df_with_pca = pd.concat([df, df_pca], axis=1)
+    
+    # Printing the new features
+    print("New PCA features:\n", df_with_pca.head())
+    
+    return df_with_pca
 
-def populate_data_for_prediction():
-    columns = ['tradecount', 'PCA_1', 'Volume USDT', 'Crypto Volume']
+def populate_data_for_prediction(currency, open_value, high_value, low_value, tradecount, crypto_volume, volume_usdt):
+    #columns = ['tradecount', 'PCA_1', 'Volume USDT', 'Crypto Volume'] # 'Open', 'High', 'Low'
+    #columns = ['tradecount', 'Volume USDT', 'Crypto Volume', 'Open', 'High', 'Low']
+    columns = ['Unix', 'Date', 'Symbol', 'Open', 'High', 'Low', 'Close', 'Crypto Volume', 'Volume USDT', 'tradecount']
     df = pd.DataFrame(columns=columns)
-    
-    record_values = {
-        'tradecount': 218314,
-        'PCA_1': -0.539601,
-        'Volume USDT': 500000,
-        'Crypto Volume': 2000
+    init_values = {
+        'Unix': None, 
+        'Date': None, 
+        'Symbol': currency, 
+        'Open': open_value, 
+        'High': high_value, 
+        'Low': low_value, 
+        'Close': None, 
+        'Crypto Volume': crypto_volume, 
+        'Volume USDT': volume_usdt, 
+        'tradecount': tradecount
     }
-    df.loc[0] = record_values
+    df.loc[0] = init_values
     
-    return df
-
-def load_model(currency):
-    model_dict = {
-        'ADAUSDT': 'best_model_ADAUSDT.pkl',
-        'AVAXUSDT': 'best_model_AVAXUSDT.pkl',
-        'BNBUSDT': 'best_model_BNBUSDT.pkl',
-        'BTCUSDT': 'best_model_BTCUSDT.pkl',
-        'DOGEUSDT': 'best_model_DOGEUSDT.pkl',
-        'ETHUSDT': 'best_model_ETHUSDT.pkl',
-        'LINKUSDT': 'best_model_LINKUSDT.pkl',
-        'SOLUSDT': 'best_model_SOLUSDT.pkl',
-        'TRXUSDT': 'best_model_TRXUSDT.pkl',
-        'XRPUSDT': 'best_model_XRPUSDT.pkl'
-    }
-    return model_dict.get(currency)
-
-# http://localhost:8000/crypto/currency/BTCUSDT/open/0.0123
-@app.route('/crypto/currency/<string:currency>/open/<float:open_value>', methods=['GET'])
-def predict_crypto_value(currency, open_value):
+    df_with_pca = apply_pca(df)
+    final_columns = ['tradecount', 'PCA_1', 'Volume USDT', 'Crypto Volume']
+    df_with_pca = df_with_pca[final_columns]
     
-    model_name = load_model(currency)
+    return df_with_pca
+
+# http://localhost:8000/crypto/currency/BTCUSDT
+@app.route('/crypto/currency/<string:currency>', methods=['GET'])
+def derive_latest_values_by_currency(currency):
+    
+    print('currency:', currency)
+    
+    file_path = f'data/Datasets/Binance_{currency}_d.csv'
+    print(file_path)
+    df = pd.DataFrame()
+
+    if os.path.isfile(file_path):
+        df = pd.read_csv(file_path, skiprows=1)
+    else:
+        print("File not found!")
+    
+    # Find columns that contain the substring 'Volume' and consider them as volume columns
+    volume_columns = [col for col in df.columns if 'Volume' in col]
+    # If there is at least one 'Volume' column, rename the first one found to 'Crypto Volume'
+    if volume_columns:
+        df.rename(columns={volume_columns[0]: 'Crypto Volume'}, inplace=True)    
+    print(df.head(1))
+    
+    # Get desired columns
+    columns_to_return = ['Open', 'High', 'Low', 'tradecount', 'Volume USDT', 'Crypto Volume']
+    
+
+    # Create a subset DataFrame with the desired columns
+    subset_df = df[columns_to_return].head(1)
+
+    # Convert DataFrame to dictionary (list of dictionaries if more than one row)
+    result = subset_df.iloc[0].to_dict()#subset_df.to_dict(orient='records')
+       
+    return jsonify(result), 200
+
+    
+    
+url = (
+    '/crypto/currency/<string:currency>/open/<float:open_value>/high/<float:high_value>/low/<float:low_value>'
+    '/tradecount/<int:tradecount>/crypto_volume/<float:crypto_volume>/volume_usdt/<float:volume_usdt>'
+)
+
+# http://localhost:8000/crypto/currency/BTCUSDT/open/52137.68/high/52488.77/low/51677.0/tradecount/1542990/crypto_volume/29534.99432/volume_usdt/1539600521.6007729
+@app.route(url, methods=['GET'])
+def predict_crypto_value(currency, open_value, high_value, low_value, tradecount, crypto_volume, volume_usdt):
+    
+    models_directory = 'models/'
     
     # Construct the path to the model file based on user input
-    model_path = os.path.join(models_directory, f'{model_name}')
-
+    model_path = os.path.join(models_directory, f'best_model_{currency}.pkl')
+   
     # Check if the model file exists
     if not os.path.exists(model_path):
-        return jsonify({'error': f'Model {model_name} not found'}), 404
+        return jsonify({'error': f'Model {currency} not found'}), 404
     
     # Load the model from file
     with open(model_path, 'rb') as file:
@@ -59,7 +127,8 @@ def predict_crypto_value(currency, open_value):
     
  
     # Perform prediction using the selected model
-    prediction = currency_model.predict(populate_data_for_prediction())
+    prediction = currency_model.predict(
+        populate_data_for_prediction(currency, open_value, high_value, low_value, tradecount, crypto_volume, volume_usdt))
     
     # Return the prediction as JSON response
     return jsonify({'prediction': prediction.tolist()}), 200

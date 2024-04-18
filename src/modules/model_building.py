@@ -29,7 +29,7 @@ def select_best_model(mae_xgb, mae_lr, mae_rf, mse_xgb, mse_lr, mse_rf, rmse_xgb
     return best_model_info
 
 #    Train models for each symbol in the dataset, select the best model based on performance metrics,
-def train_models(df, symbols=None, features=['tradecount', 'PCA_1', 'Volume USDT', 'Crypto Volume'], target_column='Close', test_size=0.1, validation_size=0.1, random_state=42):
+def train_models(df, scaler, pca, symbols=None, features=['tradecount', 'PCA_1', 'Volume USDT', 'Crypto Volume'], target_column='Close', test_size=0.1, validation_size=0.1, random_state=42):
 
     # Setup directories for saving model files
     current_directory = os.path.dirname(os.path.abspath(__file__))
@@ -137,6 +137,8 @@ def train_models(df, symbols=None, features=['tradecount', 'PCA_1', 'Volume USDT
         # Save the best model, test data, and predictions to a file
         model_data = {
             'model': best_model_info['model'],
+            'scaler': scaler,
+            'pca': pca,
             'X_test': X_test,
             'y_test': y_test,
             'predictions': best_model_info['model'].predict(X_test),

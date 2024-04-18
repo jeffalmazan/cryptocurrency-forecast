@@ -40,7 +40,7 @@ def apply_pca(df, n_components=None):
     # Printing the new features
     print("New PCA features:\n", df_with_pca.head())
     
-    return df_with_pca
+    return df_with_pca, scaler, pca
 
 # df_with_pca = apply_pca(df)
 

@@ -25,7 +25,7 @@ def main():
     cleaned_df = perform_cleanup(df)
 
     # Perform PCA
-    perform_pca_df = apply_pca(cleaned_df)
+    perform_pca_df, scaler, pca = apply_pca(cleaned_df)
 
     # Handle Outlier
     # print("#3 Handle Outlier")
@@ -39,7 +39,7 @@ def main():
 
     # Model Building
     print('#5 Model Building and training')
-    train_model = train_models(perform_pca_df)
+    train_model = train_models(perform_pca_df, scaler, pca)
     
     
     

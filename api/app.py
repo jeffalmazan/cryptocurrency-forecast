@@ -58,7 +58,7 @@ def derive_latest_values_by_currency(currency):
     
     print('currency:', currency)
     
-    file_path = f'data/Datasets/Binance_{currency}_d.csv'
+    file_path = f'/data/Datasets/Binance_{currency}_d.csv'
     print(file_path)
     df = pd.DataFrame()
 

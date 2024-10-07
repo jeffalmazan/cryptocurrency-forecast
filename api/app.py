@@ -10,6 +10,11 @@ import pickle
 
 app = Flask(__name__)
 
+# Root route to handle the homepage
+@app.route('/')
+def home():
+    return "API is running. Use /crypto/currency/<currency> for predictions."
+
 def apply_pca(df, scaler, pca):
     # Extracting the relevant features for PCA
     features = ['Open', 'High', 'Low']

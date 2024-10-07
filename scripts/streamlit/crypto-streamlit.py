@@ -30,7 +30,9 @@ def get_othervalues():
 	# st.write( cryto_code[cryto_desc.index(st.session_state['cryptoCurr'])] )
  
 	
-	api_url = 'http://localhost:8000/crypto/currency/{0}'.format( cryto_code[cryto_desc.index(crypto)] )  # Update URL based on your Flask app's address
+	# api_url = 'http://localhost:8000/crypto/currency/{0}'.format( cryto_code[cryto_desc.index(crypto)] )  # Update URL based on your Flask app's address
+
+	api_url = 'https://cryptocurrency-forecasting-fdc2abed2488.herokuapp.com/crypto/currency/{0}'.format( cryto_code[cryto_desc.index(crypto)] )  # Update URL based on your Flask app's address
  
 	# st.write(api_url)
  
@@ -108,7 +110,8 @@ if(st.button('Predict Close Amount')):
  
 	# api_url = 'http://localhost:8000/crypto/currency/{0}/open/{1}'.format( cryto_code[cryto_desc.index(crypto)], open )  # Update URL based on your Flask app's address
 		  	   # http://localhost:8000/crypto/currency/BTCUSDT/open/52137.68/high/52488.77/low/51677.0/tradecount/1542990/crypto_volume/29534.99432/volume_usdt/1539600521.6007729
-	api_url =   'http://localhost:8000/crypto/currency/{0}/open/{1}/high/{2}/low/{3}/tradecount/{4}/crypto_volume/{5}/volume_usdt/{6}'.format( cryto_code[cryto_desc.index(crypto)], open, high, low, tradecnt, volumecrypto, volume )  # Update URL based on your Flask app's address
+	# api_url =   'http://localhost:8000/crypto/currency/{0}/open/{1}/high/{2}/low/{3}/tradecount/{4}/crypto_volume/{5}/volume_usdt/{6}'.format( cryto_code[cryto_desc.index(crypto)], open, high, low, tradecnt, volumecrypto, volume )  # Update URL based on your Flask app's address
+	api_url =   'https://cryptocurrency-forecasting-fdc2abed2488.herokuapp.com/crypto/currency/{0}/open/{1}/high/{2}/low/{3}/tradecount/{4}/crypto_volume/{5}/volume_usdt/{6}'.format( cryto_code[cryto_desc.index(crypto)], open, high, low, tradecnt, volumecrypto, volume )  # Update URL based on your Flask app's address
  
 	# st.write(api_url)
  

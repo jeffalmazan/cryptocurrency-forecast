@@ -122,7 +122,10 @@ def predict_crypto_value(currency, open_value, high_value, low_value, tradecount
     return jsonify({'prediction': prediction.tolist()}), 200
 
 if __name__ == '__main__':
-    app.run(host="localhost", port=8000, debug=True)
+    # Get the port from the environment variable
+    port = int(os.environ.get('PORT', 5000))  # Default to port 5000 if PORT isn't set
+    app.run(host='0.0.0.0', port=port)
+
     
     
     

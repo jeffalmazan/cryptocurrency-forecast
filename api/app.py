@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
+from pathlib import Path
 
 import pandas as pd
 import numpy as np
@@ -58,14 +59,16 @@ def derive_latest_values_by_currency(currency):
     
     print('currency:', currency)
     
-    file_path = f'/data/Datasets/Binance_{currency}_d.csv'
+    file_path = Path.cwd() / 'data' / 'Datasets' / f'Binance_{currency}_d.csv'
     print(file_path)
     df = pd.DataFrame()
 
-    if os.path.isfile(file_path):
+    # Use Path's .is_file() method to check if the file exists
+    if file_path.is_file():
+        # Use the Path object directly to read the CSV file
         df = pd.read_csv(file_path, skiprows=1)
     else:
-        print("File not found!")
+        print(f"File {file_path} not found!")
     
     # Find columns that contain the substring 'Volume' and consider them as volume columns
     volume_columns = [col for col in df.columns if 'Volume' in col]
